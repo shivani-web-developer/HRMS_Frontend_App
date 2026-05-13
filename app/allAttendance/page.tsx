@@ -5,7 +5,9 @@ import { useState } from 'react';
 import Sidebar from '../component/layout/Sidebar';
 import TopBar from '../component/layout/TopBar';
 import { AttendanceTable } from '../component/AllAttendance/AttendanceTable';
-import { formatDate, getCurrentMonthRange } from '../myAttendance/page';
+import {  getCurrentMonthRange } from '../myAttendance/page';
+import { formatTime, formatDate } from '../component/AllAttendance/attendanceUtils';
+
 import { useGetAllEmployeeAttendanceQuery } from '../redux/attendance/attendanceApi';
 
 export interface Employee {
@@ -76,41 +78,52 @@ export default function AttendancePage() {
         />
 
         {/* Date Filters */}
-         <div className="flex justify-between">
-          <div className="flex gap-4">
-            <span className="flex flex-col">
-              <label className="mb-1">From date</label>
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                className="border px-2 py-1 rounded"
-              />
-            </span>
-            <span className="flex flex-col">
-              <label className="mb-1">To date</label>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                className="border px-2 py-1 rounded"
-              />
-            </span>
-          </div>
+               <div className="flex flex-wrap items-end justify-between gap-4 py-4 ">
+  
+  {/* LEFT: Date Filters */}
+  <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">From date</label>
+      <input
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        className="border px-3 py-2 rounded-md min-w-[160px]"
+      />
+    </div>
 
-          <div className="flex gap-2">
-            <button className="border rounded px-5 py-1 cursor-pointer" onClick={() => refetch()}>
-              Filter
-            </button>
-            <button className="border rounded px-5 py-1 cursor-pointer">Export</button>
-            <button
-              className="bg-orange-500 text-white px-4 py-1 rounded cursor-pointer"
-              onClick={() => setOpenForm(true)}
-            >
-              + Mark Attendance
-            </button>
-          </div>
-        </div>
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">To date</label>
+      <input
+        type="date"
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        className="border px-3 py-2 rounded-md min-w-[160px]"
+      />
+    </div>
+  </div>
+
+  {/* RIGHT: Action Buttons */}
+  <div className="flex gap-3">
+    <button
+      className="border rounded-md px-6 py-2 text-sm font-medium hover:bg-gray-100"
+      onClick={() => refetch()}
+    >
+      Filter
+    </button>
+
+    <button className="border rounded-md px-6 py-2 text-sm font-medium hover:bg-gray-100">
+      Export
+    </button>
+
+    <button
+      className="bg-orange-500 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-orange-600"
+      onClick={() => setOpenForm(true)}
+    >
+      + Add Attendance
+    </button>
+  </div>
+</div>
 
         <AttendanceTable
           employees={employees}

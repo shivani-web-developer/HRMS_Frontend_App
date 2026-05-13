@@ -7,6 +7,9 @@ import TopBar from '../component/layout/TopBar';
 import EmployeeTable from '../component/employee/EmployeeTable';
 import EmployeeForm from '../component/employee/AddEmployeeForm';
 import { Employee, useDeleteEmployeeMutation, useGetEmployeesQuery } from '../redux/employee/employeeApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store/store';
+import { toast } from 'react-toastify';
 
 export default function EmployeesPage() {
   const [open, setOpen] = useState(false);
@@ -20,12 +23,22 @@ export default function EmployeesPage() {
     refetch,
   } = useGetEmployeesQuery();
 
+  const userRole = useSelector((state: RootState) => state.user.role);
+      
+  const canManageEmployees = userRole === 'ADMIN' || userRole === 'HR';
+
   const [deleteEmployee] = useDeleteEmployeeMutation();
 
   const handleDelete = async (id: string) => {
     if (!confirm(`Are you sure you want to delete employee?`)) return;
-
+    try{
     await deleteEmployee(id).unwrap();
+    toast.success('Employee deleted successfully');
+    }
+    catch(err){
+     toast.error("Failed to delete employee. Please try again.");
+      return;
+    }
     refetch(); 
   };
 
@@ -43,7 +56,8 @@ export default function EmployeesPage() {
           <Button
             variant="contained"
             color="warning"
-           onClick={() => {setSelectedEmployee(null); setOpen(true);}} >
+            disabled={!canManageEmployees}
+            onClick={() => {setSelectedEmployeeId(null); setOpen(true);}} >
             Add Employee
           </Button>
         </Box>
@@ -58,12 +72,13 @@ export default function EmployeesPage() {
           setSelectedEmployeeId(emp);
           setOpen(true);
         }}
+        canManageEmployees={canManageEmployees}
       />
 
         {/* PASS REFETCH */}
         <EmployeeForm
          open={open}
-          employeeId={selectedEmployeeId}
+          employeeId={selectedEmployeeId || null}
           onClose={() => {
             setOpen(false);
             setSelectedEmployeeId(null);

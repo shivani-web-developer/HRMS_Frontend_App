@@ -160,18 +160,18 @@ export function AttendanceTable({
       {/* TABLE */}
       <div className="relative overflow-x-auto mt-2 rounded">
         <table
-          className="w-full text-sm border-collapse"
+          className="w-full text-sm"
           style={{ tableLayout: 'fixed', minWidth: '1200px' }}
         >
           <thead className="relative">
             <tr>
-              <th className="sticky left-0 z-30 w-[120px] border p-2 bg-orange-500 ">
+              <th className="sticky left-0 z-30 w-[120px] border p-2 bg-orange-500 shadow-[inset_-1px_0_0_#000]">
                 Emp ID
               </th>
-              <th className="sticky left-[120px] z-30 w-[220px] border p-2 bg-orange-500">
+              <th className="sticky left-[120px] z-30 w-[220px] border p-2 bg-orange-500 shadow-[inset_-1px_0_0_#000]">
                 Employee
               </th>
-              <th className="sticky left-[340px] z-30 w-[180px] border p-2 bg-orange-500">
+              <th className="sticky left-[340px] z-30 w-[180px] border p-2 bg-orange-500 shadow-[inset_-1px_0_0_#000]">
                 Department
               </th>
 
@@ -201,12 +201,12 @@ export function AttendanceTable({
       style={{ height: '56px' }}
     >
       {/* Emp ID */}
-      <td className="sticky left-0 z-20 bg-red-300 border text-center font-medium">
+      <td className={`${idx % 2 === 0 ? 'bg-white' : 'bg-orange-200'} sticky left-0 z-20  border text-center shadow-[inset_-1px_0_0_#000] font-medium`}>
         {emp.employeeCode}
       </td>
 
       {/* Employee */}
-      <td className="sticky left-[120px] z-20 bg-green-400 border text-center">
+      <td className={` ${idx % 2 === 0 ? 'bg-white' : 'bg-orange-200'} sticky left-[120px] z-20 border text-center shadow-[inset_-1px_0_0_#000]`}>
         <div className="font-semibold">
           {emp.firstName} {emp.lastName}
         </div>
@@ -216,7 +216,7 @@ export function AttendanceTable({
       </td>
 
       {/* Department */}
-      <td className="sticky left-[340px] z-20 bg-orange-300 border text-center">
+      <td className={` ${idx % 2 === 0 ? 'bg-white' : 'bg-orange-200'} sticky left-[340px] z-20 border text-center shadow-[inset_-1px_0_0_#000]`}>
         {emp.department || '-'}
       </td>
 

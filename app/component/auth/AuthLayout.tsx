@@ -48,12 +48,11 @@ export default function AuthLayout({
       </div>
 
       {/* RIGHT ILLUSTRATION */}
-      <div className="hidden md:flex w-1/2 items-center justify-center bg-[#FFE0B2]">
+      <div className="hidden md:flex w-1/2 items-center justify-center bg-[#FFE0B2] relative">
         <Image
-          src="/home/home_pic.jpeg" // put your image here
+          src="/home/homePic.png" // put your image here
           alt="HRMS Illustration"
-          width={500}
-          height={400}
+          fill
         />
       </div>
     </div>

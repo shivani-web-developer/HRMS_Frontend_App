@@ -9,6 +9,8 @@ import { useGetMyAttendanceQuery } from '../redux/attendance/attendanceApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { skipToken } from '@reduxjs/toolkit/query';
+// import { formatISTTime } from '../component/AllAttendance/attendanceUtils';
+import { formatTime, formatDate } from '../component/AllAttendance/attendanceUtils';
 
 export interface MyAttendanceRecord {
   date: string;
@@ -27,12 +29,12 @@ export const getCurrentMonthRange = () => {
   return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
 };
 
-export const formatDate = (date: Date) => {
-  const d = date.getDate().toString().padStart(2, '0');
-  const m = (date.getMonth() + 1).toString().padStart(2, '0');
-  const y = date.getFullYear();
-  return `${d}-${m}-${y}`;
-};
+// export const formatDate = (date: Date) => {
+//   const d = date.getDate().toString().padStart(2, '0');
+//   const m = (date.getMonth() + 1).toString().padStart(2, '0');
+//   const y = date.getFullYear();
+//   return `${d}-${m}-${y}`;
+// };
 
 export default function AttendancePage() {
   const { from, to } = getCurrentMonthRange();
@@ -46,28 +48,31 @@ export default function AttendancePage() {
 
   const fromDateFormatted = formatDate(new Date(fromDate));
   const toDateFormatted = formatDate(new Date(toDate));
-
+console.log("Fetching attendance for empId:", empId, "from:", fromDateFormatted, "to:", toDateFormatted);
   const { data = [], isLoading, refetch } = useGetMyAttendanceQuery(
     empId
       ? { employeeId: empId, fromDate: fromDateFormatted, toDate: toDateFormatted }
       : skipToken
   );
-
+console.log("My Attendance Data:", data);
   // Transform backend data
-  const transformedRecords = data.data?.map((rec: any) => ({
-    date: new Date(rec.punchDate).toLocaleDateString('en-GB'),
-    punchIn: rec.punchIn
-      ? new Date(rec.punchIn).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-      : undefined,
-    punchOut: rec.punchOut
-      ? new Date(rec.punchOut).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-      : undefined,
+  const transformedRecords = data.data?.map((rec: any) => {
+  const punchInDate = rec.punchIn ? new Date(rec.punchIn) : null;
+  const punchOutDate = rec.punchOut ? new Date(rec.punchOut) : null;
+  
+  return {
+    date: rec.punchDate ? formatDate(rec.punchDate) : '-',
+    punchIn: punchInDate ? formatTime(punchInDate) : undefined,
+    punchOut: punchOutDate ? formatTime(punchOutDate) : undefined,
+    punchInRaw: rec.punchIn,
+    punchOutRaw: rec.punchOut,
     punchInLocation: rec.punchInLocation,
     punchOutLocation: rec.punchOutLocation,
     workingType: rec.workingType,
     status: rec.status,
-  })) ?? [];
-
+    isLeave: false,
+  };
+}) ?? [];
   // Check today's attendance for disabling buttons
  const todayAttendance = data?.data?.find(
   (rec: any) =>
@@ -84,41 +89,53 @@ const hasPunchedOut = Boolean(todayAttendance?.punchOut);
         <TopBar title="My Attendance" subtitle="Comprehensive attendance tracking and analysis." />
      
        {/* Date Filters */}
-        <div className="flex justify-between">
-          <div className="flex gap-4">
-            <span className="flex flex-col">
-              <label className="mb-1">From date</label>
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                className="border px-2 py-1 rounded"
-              />
-            </span>
-            <span className="flex flex-col">
-              <label className="mb-1">To date</label>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                className="border px-2 py-1 rounded"
-              />
-            </span>
-          </div>
+       <div className="flex flex-wrap items-end justify-between gap-4 p-4 ">
+  
+  {/* LEFT: Date Filters */}
+  <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">From date</label>
+      <input
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        className="border px-3 py-2 rounded-md min-w-[160px]"
+      />
+    </div>
 
-          <div className="flex gap-2">
-            <button className="border rounded px-5 py-1 cursor-pointer" onClick={() => refetch()}>
-              Filter
-            </button>
-            <button className="border rounded px-5 py-1 cursor-pointer">Export</button>
-            <button
-              className="bg-orange-500 text-white px-4 py-1 rounded cursor-pointer"
-              onClick={() => setOpenForm(true)}
-            >
-              + Add Attendance
-            </button>
-          </div>
-        </div>
+    <div className="flex flex-col">
+      <label className="mb-1 text-sm font-medium">To date</label>
+      <input
+        type="date"
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        className="border px-3 py-2 rounded-md min-w-[160px]"
+      />
+    </div>
+  </div>
+
+  {/* RIGHT: Action Buttons */}
+  <div className="flex gap-3">
+    <button
+      className="border rounded-md px-6 py-2 text-sm font-medium hover:bg-gray-100"
+      onClick={() => refetch()}
+    >
+      Filter
+    </button>
+
+    <button className="border rounded-md px-6 py-2 text-sm font-medium hover:bg-gray-100">
+      Export
+    </button>
+
+    <button
+      className="bg-orange-500 text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-orange-600"
+      onClick={() => setOpenForm(true)}
+    >
+      + Add Attendance
+    </button>
+  </div>
+</div>
+
 
         <MyAttendanceTable records={transformedRecords} />
 

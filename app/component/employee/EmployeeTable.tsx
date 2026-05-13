@@ -1,3 +1,4 @@
+"use client";
 interface Employee {
   empId: string;
   firstName: string;
@@ -16,6 +17,7 @@ interface Props {
   employees: Employee[];
   isLoading: boolean;
   isError: boolean;
+  canManageEmployees: boolean;
   onDelete: (id: string) => void;
   onEdit: (emp: Employee) => void;
 }
@@ -24,6 +26,7 @@ export default function EmployeeTable({
   employees,
   onDelete,
   onEdit,
+  canManageEmployees,
 }: Props) {
 
   console.log("employee=",employees)
@@ -97,6 +100,7 @@ export default function EmployeeTable({
                   <button
                     className="hover:bg-yellow-300 rounded-2xl p-1"
                     title="Edit"
+                    disabled={!canManageEmployees}
                     onClick={()=>onEdit(emp.id)}
                   >
                     ✏️
@@ -105,6 +109,7 @@ export default function EmployeeTable({
                   <button
                     className=" hover:bg-red-800 rounded-2xl p-1"
                     title="Delete"
+                    disabled={!canManageEmployees}
                     onClick={()=> onDelete(emp.id)}
                   >
                     🗑️

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { usePunchInMutation, usePunchOutMutation } from '../../redux/attendance/attendanceApi';
+import { formatTime } from '../AllAttendance/attendanceUtils';
 
 interface PunchAttendanceModalProps {
   open: boolean;
@@ -74,6 +75,7 @@ export default function PunchAttendanceModal({
       const now = new Date();
       const location = await getLocationWithAddress();
       const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+     console.log("Punching in with time:",now.toTimeString().slice(0, 5));
       const res = await punchInData({
         employeeId,
         date: formattedDate,
@@ -114,7 +116,7 @@ export default function PunchAttendanceModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-orange-400 w-full max-w-md rounded shadow-lg p-5">
+      <div className="bg-orange-500 w-full max-w-md rounded shadow-lg p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Add Attendance</h2>
           <button onClick={onClose} className="text-md">
@@ -149,7 +151,7 @@ export default function PunchAttendanceModal({
             <div className="text-sm">
               <div>Punch In:</div>
               <div className="mt-1">📅 {punchIn.toDateString()}</div>
-              <div>⏰ {formatTimeIST(punchIn)}</div>
+              <div>⏰ {formatTime(punchIn)}</div>
               <div>📍 {punchInLocation}</div>
             </div>
           )}
@@ -158,7 +160,7 @@ export default function PunchAttendanceModal({
             <div className="text-sm mt-2">
               <div>Punch Out:</div>
               <div className="mt-1">📅 {punchOut.toDateString()}</div>
-              <div>⏰ {punchOut.toLocaleTimeString()}</div>
+              <div>⏰ {formatTime(punchOut)}</div>
               <div>📍 {punchOutLocation}</div>
             </div>
           )}
