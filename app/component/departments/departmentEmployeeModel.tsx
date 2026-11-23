@@ -41,7 +41,7 @@ export default function DepartmentEmployeesModal({
               <div className="font-medium">
                 {emp.firstName} {emp.lastName}
               </div>
-              <div className="text-sm text-gray-500">EMP-{emp.id}</div>
+              <div className="text-sm text-gray-500">{emp.id}</div>
             </div>
           ))}
         </div>

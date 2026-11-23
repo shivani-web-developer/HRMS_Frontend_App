@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import DepartmentEmployeesModal from '../component/departments/departmentEmployeeModel';
 import { Avatar } from '../component/departments/Avatar';
-import { AvatarGroup } from '../component/departments/AvtarGroup';
+import  {AvatarGroup}  from '../component/departments/AvtarGroup';
 import DepartmentForm from '../component/departments/departmentForm';
 import DepartmentModal from '../component/departments/departmentModel';
 import { Box } from '@mui/material';
@@ -218,8 +218,15 @@ export default function DepartmentPage() {
         <tbody>
           {departments.map((dept) => (
             <tr key={dept.id} className="border-t">
-              <td className="p-3">{dept.id}</td>
-              <td className="p-3">{dept.name}</td>
+              <td className="p-3 ">{dept.id}</td>
+              <td className="p-3 ">
+                <h1>{dept.name}</h1>
+               <p className="text-xs text-gray-500">
+                  {dept.description?.length > 30
+                     ? `${dept.description.slice(0, 30)}...`
+                     : dept.description}
+               </p>
+              </td>
 
               <td className="p-3 flex items-center gap-2">
                 <Avatar name={dept.headName} />
